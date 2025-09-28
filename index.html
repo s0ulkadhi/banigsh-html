@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>URL Cleaner</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        background: #f4f4f9;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 { color: #333; margin-bottom: 30px; }
+    .input-group { display: flex; max-width: 500px; width: 100%; }
+    input { flex: 1; padding: 12px 15px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px 0 0 8px; outline: none; }
+    input:focus { border-color: #007bff; }
+    button { padding: 12px 20px; font-size: 16px; border: none; background: #007bff; color: white; cursor: pointer; border-radius: 0 8px 8px 0; transition: background 0.3s; }
+    button:hover { background: #0056b3; }
+    .result { margin-top: 25px; text-align: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 500px; width: 100%; word-break: break-word; display: none; }
+    .copy-btn { margin-top: 10px; padding: 8px 15px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; transition: background 0.3s; }
+    .copy-btn:hover { background: #1e7e34; }
+    a { color: #007bff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    p.privacy { margin-top:10px; font-size:14px; color:#555; }
+    footer { margin-top: auto; font-size: 14px; color: #555; text-align: center; padding: 10px 0; }
+</style>
+</head>
+<body>
+<h1>🪄Banigsh!🪄</h1>
+<div class="input-group">
+    <input type="text" id="urlInput" placeholder="Enter your URL here">
+    <button onclick="cleanURL()">Clean</button>
+</div>
+<p class="privacy">🔒 No data is stored. Your URLs remain private.</p>
+
+<div class="result" id="resultBox">
+    <p><strong>Original:</strong> <a href="#" target="_blank" id="originalUrl"></a></p>
+    <p><strong>Cleaned:</strong> <a href="#" target="_blank" id="cleanedUrl"></a></p>
+    <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+</div>
+
+<footer>Created with ❤️</footer>
+
+<script>
+const input = document.getElementById("urlInput");
+input.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        cleanURL();
+    }
+});
+
+function cleanURL() {
+    const raw = input.value.trim();
+    if (!raw) return alert("Enter a URL!");
+    
+    try {
+        const urlObj = new URL(raw);
+        const cleaned = urlObj.origin + urlObj.pathname;
+
+        const origEl = document.getElementById("originalUrl");
+        const cleanEl = document.getElementById("cleanedUrl");
+        origEl.href = raw;
+        origEl.innerText = raw;
+        cleanEl.href = cleaned;
+        cleanEl.innerText = cleaned;
+
+        const resultBox = document.getElementById("resultBox");
+        resultBox.style.display = "block";
+
+        // Auto-select cleaned URL
+        const range = document.createRange();
+        range.selectNode(cleanEl);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+
+    } catch(e) {
+        alert("Invalid URL");
+    }
+}
+
+function copyToClipboard() {
+    const cleaned = document.getElementById("cleanedUrl").innerText;
+    navigator.clipboard.writeText(cleaned).then(() => alert("Copied: " + cleaned));
+}
+</script>
+</body>
+</html>
